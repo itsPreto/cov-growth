@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/vertical_gradient_bk"
+    tools:context=".ui.CountryDetailActivity"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:showIn="@layout/activity_read">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        app:cardBackgroundColor="@android:color/transparent"
+        app:cardCornerRadius="8dp"
+        android:layout_margin="8dp"
+        android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/mainCardViewContainer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:elevation="8dp"
+                android:layout_margin="20dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:cardBackgroundColor="@android:color/darker_gray"
+                app:cardCornerRadius="16dp">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:background="@android:color/darker_gray">
+
+                    <TextView
+                        android:id="@+id/country"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:gravity="end"
+                        android:textStyle="italic"
+                        android:textSize="24sp"
+                        android:layout_marginEnd="32dp"
+                        android:paddingBottom="16dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:textColor="@android:color/black"
+                        android:text="Country" />
+
+                    <TextView
+                        android:id="@+id/totalConfirmedLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="50dp"
+                        android:gravity="center"
+                        android:text="Total Confirmed:"
+                        android:textColor="@android:color/black"
+                        android:textSize="16sp"
+                        android:textStyle="italic"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/country" />
+
+                    <TextView
+                        android:id="@+id/totalConfirmed"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:gravity="center"
+                        android:text="20,231,231"
+                        android:textColor="@android:color/black"
+                        android:textSize="24sp"
+                        android:textStyle="italic"
+                        app:layout_constraintBottom_toBottomOf="@+id/totalConfirmedLabel"
+                        app:layout_constraintTop_toTopOf="@+id/totalConfirmedLabel"
+                        app:layout_constraintStart_toEndOf="@id/totalConfirmedLabel"/>
+
+                    <TextView
+                        android:id="@+id/totalRecoveredLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:gravity="center"
+                        android:text="Total Recovered:"
+                        android:textColor="@android:color/black"
+                        android:textSize="16sp"
+                        android:textStyle="italic"
+                        app:layout_constraintEnd_toEndOf="@+id/totalConfirmedLabel"
+                        app:layout_constraintStart_toStartOf="@+id/totalConfirmedLabel"
+                        app:layout_constraintTop_toBottomOf="@+id/totalConfirmedLabel" />
+
+
+                    <TextView
+                        android:id="@+id/totalRecovered"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:gravity="center"
+                        android:text="12,231,231"
+                        android:textColor="@android:color/black"
+                        android:textSize="24sp"
+                        android:textStyle="italic"
+                        app:layout_constraintBottom_toBottomOf="@+id/totalRecoveredLabel"
+                        app:layout_constraintStart_toEndOf="@+id/totalRecoveredLabel"
+                        app:layout_constraintTop_toBottomOf="@id/totalConfirmed" />
+
+                    <TextView
+                        android:id="@+id/totalDeathsLabel"
+                        android:layout_width="93dp"
+                        android:layout_height="17dp"
+                        android:layout_margin="10dp"
+                        android:gravity="center"
+                        android:text="Total Deaths:"
+                        android:textColor="@android:color/black"
+                        android:textSize="16sp"
+                        android:textStyle="italic"
+                        app:layout_constraintEnd_toStartOf="@+id/totalConfirmed"
+                        app:layout_constraintStart_toStartOf="@+id/totalRecoveredLabel"
+                        app:layout_constraintTop_toBottomOf="@+id/totalRecoveredLabel" />
+
+
+                    <TextView
+                        android:id="@+id/totalDeaths"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:gravity="center"
+                        android:text="752,214"
+                        android:textColor="@android:color/black"
+                        android:textSize="24sp"
+                        android:textStyle="italic"
+                        app:layout_constraintBottom_toBottomOf="@id/totalDeathsLabel"
+                        app:layout_constraintStart_toEndOf="@+id/totalDeathsLabel"
+                        app:layout_constraintTop_toBottomOf="@id/totalRecovered" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.cardview.widget.CardView>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</androidx.core.widget.NestedScrollView>
