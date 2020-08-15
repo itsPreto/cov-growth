@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ImageView android:id="@+id/logo"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginEnd="5dp"
+    android:layout_marginStart="5dp"
+    android:layout_marginBottom="5dp"
+    android:layout_marginTop="5dp"
+    android:scaleType="fitStart"
+    android:src="@drawable/logo"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:srcCompat="@drawable/logo"
+    android:contentDescription="Country"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" />
+
