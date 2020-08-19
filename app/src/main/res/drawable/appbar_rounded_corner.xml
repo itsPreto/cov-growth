@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android"
+shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
 
     <stroke android:color="@android:color/transparent"
@@ -12,8 +11,8 @@
 
     <gradient android:angle="45"
         android:type="linear"
-        android:startColor="@color/color_secondary_variant"
-        android:endColor="@color/color_secondary_variant"
+        android:startColor="#1B255E"
+        android:endColor="#C8B868E6"
         android:useLevel="false"/>
 
     <size android:height="250dp"

@@ -2,6 +2,9 @@ package com.jmc.covgrowth.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.view.View.GONE
@@ -15,35 +18,95 @@ import androidx.core.app.ActivityOptionsCompat
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import com.dev.adnetworkm.CheckNetworkStatus
+import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetBehavior.*
 import com.jmc.covgrowth.R
 import com.jmc.covgrowth.adapter.DummyAdapter
 import com.jmc.covgrowth.adapter.MyClickListener
+import com.jmc.covgrowth.model.Country
 import com.jmc.covgrowth.model.GlobalSummary
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.bottom_sheet.*
-import kotlinx.android.synthetic.main.newlayout.view.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import java.util.*
+import kotlin.collections.ArrayList
 
-class MainActivity : AppCompatActivity(),
-    MyClickListener {
+const val STATE_PEAKING : Int = 150
+
+class MainActivity : AppCompatActivity(), MyClickListener {
     private val godlyViewModel: GodlyViewModel by viewModels()
+
+    private lateinit var mutableListOfCountries: List<Country>
+
+    private lateinit var myAdapter: DummyAdapter
 
     private var behavior: BottomSheetBehavior<*>? = null
     private var recyclerView: RecyclerView? = null
 
+    val bottomSheetShowing = false
+
+
+    private var newOffset = 342
+
+    @ExperimentalCoroutinesApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
+        setSupportActionBar(global_cases_toolbar)
         recyclerView = findViewById(R.id.recyclerView)
-        checknetworkstatus()
+        checkConnectivity()
+
+//       TODO: This is not working? help
+//        fix it...
+//        basically:
+//          ***detect a click on the main background layout
+//          - if (there is enough background on the screen,
+//                aka. behavior.state == BottomSheetBehavior.HALF_EXPANDED)
+//        collapse the BottomSheet
+//          ........>
+//          ..........>
+//          ............>
+//          ..............>
+//              .....
+//        scrollViewContainer.setOnClickListener {
+//           behavior?.state = BottomSheetBehavior.STATE_HIDDEN
+//        }
+
         val bottomSheet = findViewById<View>(R.id.bottomSheetContainer)
+        val scrollView = findViewById<View>(R.id.scrollViewContainer)
         val bottomSheetTextView = findViewById<TextView>(R.id.textView)
         val bottomSheetTextView2 = findViewById<TextView>(R.id.textView2)
+
+
+        searchView.addTextChangedListener( object :TextWatcher{
+
+            override fun afterTextChanged(chagedText: Editable?) {
+                filterList(chagedText.toString())
+            }
+
+            override fun beforeTextChanged(unchangedText: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+
+        })
+
+        val handler = Handler()
+        val r: Runnable = object : Runnable {
+            override fun run() {
+                toolbar_layout.title = "Dynamic Header"
+                handler.postDelayed(this, 1500)
+            }
+        }
+        handler.postDelayed(r, 3000)
+
         behavior = BottomSheetBehavior.from(bottomSheet)
         behavior?.apply {
-            peekHeight = 120
+
+            /** This is how I'm currently setting/resetting the bottomSheet height*/
+            peekHeight = STATE_PEAKING
             addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
                 override fun onStateChanged(bottomSheet: View, newState: Int) {
                     // React to state change
@@ -51,7 +114,7 @@ class MainActivity : AppCompatActivity(),
 
                 override fun onSlide(bottomSheet: View, slideOffset: Float) {
                     // React to state change
-                    val text1 = "BottomSheet offset: ${slideOffset.toString()}"
+                    val text1 = "BottomSheet Height: ${bottomSheet.height.toFloat() * slideOffset}"
                     val text2 = "AppBar Height: ${app_bar.height}"
                     Log.d("TAG_X",slideOffset.toString())
                     bottomSheetTextView.text = text1
@@ -61,10 +124,30 @@ class MainActivity : AppCompatActivity(),
                 }
             })
         }
+
+        app_bar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
+            val currentOffset = verticalOffset * -1
+//            if(currentOffset)
+
+
+            Log.d("TAG_X", verticalOffset.toString())
+        })
+    }
+
+    private fun filterList(filteredCountry: String) {
+        val tempList: MutableList<Country> = ArrayList()
+
+        for(country in mutableListOfCountries) {
+            if(filteredCountry.toLowerCase(Locale.ROOT) in country.country.toLowerCase(Locale.ROOT)) {
+                tempList.add(country)
+            }
+        }
+        myAdapter.updateList(tempList)
+
     }
 
     @ExperimentalCoroutinesApi
-    private fun checknetworkstatus() {
+    private fun checkConnectivity() {
         CheckNetworkStatus.getNetworkLiveData(applicationContext).observe(this, Observer { t ->
             when (t) {
                 true -> {
@@ -83,15 +166,15 @@ class MainActivity : AppCompatActivity(),
     @ExperimentalCoroutinesApi
     private fun setObserver() {
         godlyViewModel.globalSummary.observe(this, Observer {
-            recyclerView?.adapter =
-                DummyAdapter(
-                    it,
-                    applicationContext,
-                    this
-                )
-
-            global_cases_tv.text = "Global - \n${it.global.totalConfirmed}"
+            myAdapter = DummyAdapter(
+                it,
+                applicationContext,
+                this
+            )
+            recyclerView?.adapter = myAdapter
+            toolbar_layout.title = "Global - \n${it.global.totalConfirmed}"
             turnOffProgressBar()
+            mutableListOfCountries= it.countries
             recyclerView?.visibility = VISIBLE
         })
     }
@@ -121,17 +204,39 @@ class MainActivity : AppCompatActivity(),
             transitionName // The String
         )
 
+        behavior?.state = STATE_HALF_EXPANDED
+
         //Start the Intent
         ActivityCompat.startActivity(this, intent, options.toBundle())
     }
 
     override fun onBackPressed() {
         behavior?.let {
-            if (it.state != BottomSheetBehavior.STATE_HIDDEN) {
-                it.setState(BottomSheetBehavior.STATE_HALF_EXPANDED)
+            if (it.state != STATE_HIDDEN
+                && it.state != STATE_COLLAPSED && it.state != STATE_HALF_EXPANDED) {
+                it.setState(STATE_HALF_EXPANDED)
+            } else if(it.state == STATE_HALF_EXPANDED) {
+//                behavior?.state = STATE_HIDDEN
+//                behavior.
             } else {
                 super.onBackPressed()
             }
+
+//            when (it.state) {
+//
+//                STATE_HIDDEN -> AlertDialog.Builder(this).create().apply {
+//                    setTitle("Are you sure you want to exit the app?")
+//                    setButton(
+//                        BUTTON_POSITIVE,
+//                        "Exit",
+//                    )
+//                    setButton(BUTTON_NEGATIVE, "Cancel", { dialog, i ->
+//                        dialog.dismiss()
+//                    })
+//                }
+//                else ->
+//            }
+
         }
 
     }

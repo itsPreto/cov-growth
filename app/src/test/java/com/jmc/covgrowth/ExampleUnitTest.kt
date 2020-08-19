@@ -1,4 +1,4 @@
-package com.jmc.wammy
+package com.jmc.covgrowth
 
 import org.junit.Test
 

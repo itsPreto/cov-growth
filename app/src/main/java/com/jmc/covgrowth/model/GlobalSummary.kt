@@ -10,7 +10,7 @@ import android.os.Parcelable
 @Parcelize
 data class GlobalSummary(
     @SerializedName("Countries")
-    val countries: List<Country>,
+    var countries: MutableList<Country>,
     @SerializedName("Date")
     val date: String, // 2020-08-11T21:43:33Z
     @SerializedName("Global")

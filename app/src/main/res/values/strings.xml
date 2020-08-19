@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Wammy</string>
+    <string name="app_name">Cov Growth</string>
     <string name="title_activity_read">ReadActivity</string>
     <string name="transition_string">hello</string>
     <string name="large_text">

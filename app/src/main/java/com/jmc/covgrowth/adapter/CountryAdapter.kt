@@ -13,6 +13,7 @@ import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.jmc.covgrowth.R
+import com.jmc.covgrowth.model.Country
 import com.jmc.covgrowth.model.GlobalSummary
 import com.squareup.picasso.Picasso
 import jp.wasabeef.picasso.transformations.CropCircleTransformation
@@ -41,6 +42,11 @@ class DummyAdapter(
 
     override fun getItemCount(): Int {
         return dataList.countries.size
+    }
+
+    fun updateList(list: MutableList<Country>){
+        dataList.countries = list
+        notifyDataSetChanged()
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {

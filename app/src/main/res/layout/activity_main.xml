@@ -4,10 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
+    android:background="@android:color/transparent"
     android:fitsSystemWindows="false"
     android:transitionName="@string/transition_string"
-    tools:context=".ui.CountryDetailActivity">
+    tools:context=".ui.MainActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar"
@@ -21,19 +21,28 @@
             android:id="@+id/toolbar_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            app:titleEnabled="true"
+            app:title="Hello"
+            app:expandedTitleGravity="center"
+            app:collapsedTitleGravity="end"
+            app:collapsedTitleTextAppearance="@style/TextAppearance.AppCompat.Medium"
             android:background="@drawable/appbar_rounded_corner"
             android:fitsSystemWindows="true"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
-            <TextView
-                android:id="@+id/global_cases_tv"
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/global_cases_toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="50dp"
                 android:gravity="center"
                 android:textSize="32sp"
-                android:text="20,092,202"/>
+                app:titleMarginEnd="20dp"
+                android:titleTextAppearance="@style/TextAppearance.AppCompat.Large"
+                app:layout_collapseMode="pin" />
+
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
+
     </com.google.android.material.appbar.AppBarLayout>
 
     <include layout="@layout/newlayout"/>

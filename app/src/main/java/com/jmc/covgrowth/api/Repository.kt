@@ -13,7 +13,15 @@ class Repository {
     suspend fun getTodo() = client.getTodo()
 
     @ExperimentalCoroutinesApi
+    suspend fun searchCountry() = client.getTodo()
+
+    @ExperimentalCoroutinesApi
     var dataFlow = flow {
+        emit(getTodo())
+    }
+
+    @ExperimentalCoroutinesApi
+    var searchFlow = flow {
         emit(getTodo())
     }
 }
