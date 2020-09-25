@@ -29,13 +29,11 @@ import com.jmc.covgrowth.model.GlobalSummary
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.bottom_sheet.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import java.util.*
-import kotlin.collections.ArrayList
 
 const val STATE_PEAKING : Int = 150
 
 class MainActivity : AppCompatActivity(), MyClickListener {
-    private val godlyViewModel: GodlyViewModel by viewModels()
+    private val vm: ViewModel by viewModels()
 
     private lateinit var mutableListOfCountries: List<Country>
 
@@ -56,22 +54,6 @@ class MainActivity : AppCompatActivity(), MyClickListener {
         setSupportActionBar(global_cases_toolbar)
         recyclerView = findViewById(R.id.recyclerView)
         checkConnectivity()
-
-//       TODO: This is not working? help
-//        fix it...
-//        basically:
-//          ***detect a click on the main background layout
-//          - if (there is enough background on the screen,
-//                aka. behavior.state == BottomSheetBehavior.HALF_EXPANDED)
-//        collapse the BottomSheet
-//          ........>
-//          ..........>
-//          ............>
-//          ..............>
-//              .....
-//        scrollViewContainer.setOnClickListener {
-//           behavior?.state = BottomSheetBehavior.STATE_HIDDEN
-//        }
 
         val bottomSheet = findViewById<View>(R.id.bottomSheetContainer)
         val scrollView = findViewById<View>(R.id.scrollViewContainer)
@@ -100,7 +82,7 @@ class MainActivity : AppCompatActivity(), MyClickListener {
                 handler.postDelayed(this, 1500)
             }
         }
-        handler.postDelayed(r, 3000)
+//        handler.postDelayed(r, 3000)
 
         behavior = BottomSheetBehavior.from(bottomSheet)
         behavior?.apply {
@@ -126,25 +108,12 @@ class MainActivity : AppCompatActivity(), MyClickListener {
         }
 
         app_bar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
-            val currentOffset = verticalOffset * -1
-//            if(currentOffset)
-
-
             Log.d("TAG_X", verticalOffset.toString())
         })
     }
 
-    private fun filterList(filteredCountry: String) {
-        val tempList: MutableList<Country> = ArrayList()
-
-        for(country in mutableListOfCountries) {
-            if(filteredCountry.toLowerCase(Locale.ROOT) in country.country.toLowerCase(Locale.ROOT)) {
-                tempList.add(country)
-            }
-        }
-        myAdapter.updateList(tempList)
-
-    }
+    @ExperimentalCoroutinesApi
+    private fun filterList(country: String) = myAdapter.updateList(vm.filter(country))
 
     @ExperimentalCoroutinesApi
     private fun checkConnectivity() {
@@ -165,17 +134,19 @@ class MainActivity : AppCompatActivity(), MyClickListener {
 
     @ExperimentalCoroutinesApi
     private fun setObserver() {
-        godlyViewModel.globalSummary.observe(this, Observer {
+        vm.globalSummary.observe(this, Observer {
             myAdapter = DummyAdapter(
                 it,
                 applicationContext,
                 this
             )
-            recyclerView?.adapter = myAdapter
+            recyclerView?.apply {
+                adapter = myAdapter
+                visibility = VISIBLE
+            }
             toolbar_layout.title = "Global - \n${it.global.totalConfirmed}"
             turnOffProgressBar()
-            mutableListOfCountries= it.countries
-            recyclerView?.visibility = VISIBLE
+            mutableListOfCountries = it.countries
         })
     }
 
@@ -216,28 +187,10 @@ class MainActivity : AppCompatActivity(), MyClickListener {
                 && it.state != STATE_COLLAPSED && it.state != STATE_HALF_EXPANDED) {
                 it.setState(STATE_HALF_EXPANDED)
             } else if(it.state == STATE_HALF_EXPANDED) {
-//                behavior?.state = STATE_HIDDEN
-//                behavior.
+                behavior?.state = STATE_COLLAPSED
             } else {
                 super.onBackPressed()
             }
-
-//            when (it.state) {
-//
-//                STATE_HIDDEN -> AlertDialog.Builder(this).create().apply {
-//                    setTitle("Are you sure you want to exit the app?")
-//                    setButton(
-//                        BUTTON_POSITIVE,
-//                        "Exit",
-//                    )
-//                    setButton(BUTTON_NEGATIVE, "Cancel", { dialog, i ->
-//                        dialog.dismiss()
-//                    })
-//                }
-//                else ->
-//            }
-
         }
-
     }
 }
