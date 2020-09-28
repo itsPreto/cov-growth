@@ -6,10 +6,8 @@ import android.net.Network
 import android.net.NetworkRequest
 import android.os.Build
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.*
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.liveData
 import com.jmc.covgrowth.api.Repository
 import com.jmc.covgrowth.model.Country
 import com.jmc.covgrowth.model.GlobalSummary
@@ -21,34 +19,22 @@ import java.util.*
 class ViewModel : ViewModel() {
     private val repository: Repository = Repository()
 
-//    private lateinit var globalSummary : GlobalSummary
-
     @ExperimentalCoroutinesApi
-    val globalSummary: LiveData<GlobalSummary> = liveData(Dispatchers.IO) {
-        val data = repository.dataFlow
-        data.collect { response ->
-            Log.d("TAG_X", response.countries.toString())
-            emit(response)
-        }
-    }
+    val countryDataFlow: LiveData<GlobalSummary> = repository.dataFlow.asLiveData()
 
     @ExperimentalCoroutinesApi
     fun filter(filteredCountry: String): MutableList<Country> {
-        return globalSummary.value?.countries?.filter{
+        return countryDataFlow.value?.countries?.filter{
             filteredCountry.toLowerCase(Locale.ROOT) in it.country.toLowerCase(Locale.ROOT)
         } as MutableList<Country>
     }
-
 }
-
 
 object CheckNetworkStatus : ViewModel() {
     val networkLiveData: MutableLiveData<Boolean> = MutableLiveData()
-
     fun Context.getConnectivityLiveData() : LiveData<Boolean> {
         val connectivityManager =
             this.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-
         val networkCallback = object : ConnectivityManager.NetworkCallback() {
             override fun onAvailable(network: Network?) = networkLiveData.postValue(true)
             override fun onLost(network: Network?) = networkLiveData.postValue(false)
@@ -64,9 +50,7 @@ object CheckNetworkStatus : ViewModel() {
                 )
                 return@with
             }
-
         }
         return networkLiveData
     }
-
 }

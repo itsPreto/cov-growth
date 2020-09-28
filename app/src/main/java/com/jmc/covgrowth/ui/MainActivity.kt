@@ -24,6 +24,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior.*
 import com.jmc.covgrowth.R
 import com.jmc.covgrowth.adapter.DummyAdapter
 import com.jmc.covgrowth.adapter.MyClickListener
+import com.jmc.covgrowth.base.BaseActivity
 import com.jmc.covgrowth.model.Country
 import com.jmc.covgrowth.model.GlobalSummary
 import kotlinx.android.synthetic.main.activity_main.*
@@ -32,7 +33,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 const val STATE_PEAKING : Int = 150
 
-class MainActivity : AppCompatActivity(), MyClickListener {
+class MainActivity : BaseActivity(), MyClickListener {
     private val vm: ViewModel by viewModels()
 
     private lateinit var mutableListOfCountries: List<Country>
@@ -47,6 +48,7 @@ class MainActivity : AppCompatActivity(), MyClickListener {
 
     private var newOffset = 342
 
+
     @ExperimentalCoroutinesApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,24 +57,15 @@ class MainActivity : AppCompatActivity(), MyClickListener {
         recyclerView = findViewById(R.id.recyclerView)
         checkConnectivity()
 
-        val bottomSheet = findViewById<View>(R.id.bottomSheetContainer)
-        val scrollView = findViewById<View>(R.id.scrollViewContainer)
-        val bottomSheetTextView = findViewById<TextView>(R.id.textView)
-        val bottomSheetTextView2 = findViewById<TextView>(R.id.textView2)
+        val (bottomSheet, bottomSheetTextView, bottomSheetTextView2) = initViews()
 
 
         searchView.addTextChangedListener( object :TextWatcher{
-
-            override fun afterTextChanged(chagedText: Editable?) {
-                filterList(chagedText.toString())
-            }
-
-            override fun beforeTextChanged(unchangedText: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            }
-
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            }
-
+            override fun afterTextChanged(chagedText: Editable?) = filterList(chagedText.toString())
+            override fun beforeTextChanged(unchangedText: CharSequence?, p1: Int, p2: Int, p3: Int) =
+                println("searchView beforeTextChanged: $unchangedText")
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) =
+                println("searchView afterTextChanged: $p0")
         })
 
         val handler = Handler()
@@ -112,6 +105,14 @@ class MainActivity : AppCompatActivity(), MyClickListener {
         })
     }
 
+    private fun initViews(): Triple<View, TextView, TextView> {
+        val bottomSheet = findViewById<View>(R.id.bottomSheetContainer)
+        val scrollView = findViewById<View>(R.id.scrollViewContainer)
+        val bottomSheetTextView = findViewById<TextView>(R.id.textView)
+        val bottomSheetTextView2 = findViewById<TextView>(R.id.textView2)
+        return Triple(bottomSheet, bottomSheetTextView, bottomSheetTextView2)
+    }
+
     @ExperimentalCoroutinesApi
     private fun filterList(country: String) = myAdapter.updateList(vm.filter(country))
 
@@ -119,27 +120,17 @@ class MainActivity : AppCompatActivity(), MyClickListener {
     private fun checkConnectivity() {
         CheckNetworkStatus.getNetworkLiveData(applicationContext).observe(this, Observer { t ->
             when (t) {
-                true -> {
-                    setObserver()
-                }
-                false -> {
-                    Toast.makeText(this, "No Network Connection", Toast.LENGTH_SHORT).show()
-                }
-                null -> {
-                    // TODO: Handle the connection...
-                }
+                true -> setObserver()
+                false -> Toast.makeText(this, "No Network Connection", Toast.LENGTH_SHORT).show()
+                null -> Toast.makeText(this, "Not sure bro", Toast.LENGTH_SHORT).show()
             }
         })
     }
 
     @ExperimentalCoroutinesApi
     private fun setObserver() {
-        vm.globalSummary.observe(this, Observer {
-            myAdapter = DummyAdapter(
-                it,
-                applicationContext,
-                this
-            )
+        vm.countryDataFlow.observe(this, Observer {
+            myAdapter = DummyAdapter(it, applicationContext, this)
             recyclerView?.apply {
                 adapter = myAdapter
                 visibility = VISIBLE
