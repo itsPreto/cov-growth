@@ -1,0 +1,8 @@
+to-dos
+
+1 - move logic/processing code into viewmodel
+2 - data binding
+3 - data modeling (see 4)
+4 - graphs impl. (see 3)
+5 - sharedPrefs theme/settings (i.e. setting fav city/state/country)
+6
