@@ -1,14 +1,14 @@
 # cov-growth
 
-This app is a "Covid Data-Pack Analyser" or at least that's what it'll be ... eventually. 
+task-list:
 
-1- I'm consuming data from a public backend (no key or headers needed) -> https://api.covid19api.com
+1 - COVER 70% OF APP WITH UNIT TESTS (JUnit)
+2 - ADD HILT (dependency injection)
+3 - CONVERT LAYOUTS TO COMPOSE (Jetpack Compose)
+4 - ADD EPOXY: CAROUSEL (ViewPager successor)
+5 - ADD DATA-BINDING (for UI updates)
+6 - ADD ROOM Database (for local data caching)
+7 - ADD ANALYTICS (track user events to drive UI/UX improvement)
 
-2- Parsing the various Json responses into their appropiate models (Gson, Coroutines, Retrofit, OkHttp, LiveData, 
 
-3- Storing them for a later retrieval (Room/ViewModel/Repository). 
 
-The Masterplan: 
-  - use some slick math skills to put all the data to good use and visualize it in all sorts of graphs using MPChart.
-  
-CI/CD: tbd
